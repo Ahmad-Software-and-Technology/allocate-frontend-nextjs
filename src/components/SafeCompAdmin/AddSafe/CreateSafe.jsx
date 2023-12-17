@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   AddSafeStyles,
   ApprovalDropdown,
@@ -18,6 +18,8 @@ import { MultiSigSafe, milestoneSafe, erc20Abi } from "../../../helpers/contract
 import ethers from "ethers"
 import { API } from "@/service/api/api";
 import { useSelector } from "react-redux";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const CreateSafe = () => {
 
@@ -37,8 +39,10 @@ const CreateSafe = () => {
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   const signer = provider.getSigner();
   const emissary = useSelector((state) => state.emissary.emissary);
-  const [emissaryRoles, setEmissaryRoles] = useState(0)
-  console.log(emissaryRoles)
+  const [emissaryControlers, setEmissaryControllers] = useState([]);
+  const [selectedAddresses, setSelectedAddresses] = useState([]);
+
+
 
   const convertToWei = (amountsInEther) => {
     return amountsInEther.map(amount => ethers.utils.parseEther(amount));
@@ -65,22 +69,26 @@ const CreateSafe = () => {
   }
   const createSafeContract = async (e) => {
     e.preventDefault()
+    handleValidation(e)
     const safeContract = new ethers.Contract(MultiSigSafe, MultiSafeAbi.abi, signer);
     const milestoneSafeContract = new ethers.Contract(milestoneSafe, MilestoneSafeAbi.abi, signer);
     if (checkBoxVal) {
       if (assetsValue.address == "native") {
+        // console.log(body)
+        console.log(body.lumSumReleaseAmount)
         const safeId = await safeContract.createSafeForNative(
           recipientAddress,
-          ethers.utils.parseEther(lumSumAmount),
-          minimumApprovers,
-          approvers,
+          ethers.utils.parseEther(body.lumSumReleaseAmount.toString()),
+          body.approversCount,
+          body.approvers,
           {
-            value: ethers.utils.parseEther(lumSumAmount),
+            value: ethers.utils.parseEther(body.lumSumReleaseAmount.toString()),
           })
-        console.log(ethers.utils.parseEther(lumSumAmount))
+        console.log(ethers.utils.parseEther(body.lumSumReleaseAmount.toString()))
         const receipt = await safeId.wait();
         const event = receipt.events.find((event) => event.event === 'SafeCreated');
         const safeId2 = event.args[0].toNumber();
+        handleSafe(safeId2)
         console.log(receipt);
         console.log("Safe Created successfully");
         console.log(safeId2)
@@ -97,6 +105,7 @@ const CreateSafe = () => {
         const receipt = await safeId.wait();
         const event = receipt.events.find((event) => event.event === 'SafeCreated');
         const safeId2 = event.args[0].toNumber();
+        handleSafe(safeId2)
         console.log("Safe Created successfully");
         console.log(safeId2)
 
@@ -151,20 +160,32 @@ const CreateSafe = () => {
   }
 
 
-  const updateBody = (key, value) => {
-    setBody(prevBody => ({ ...prevBody, [key]: value }));
-  };
 
-
-  const handleSafe = async (e) => {
-    e.preventDefault()
-    console.log(body)
-
-    // await API.createSafe(body).then((res) => {
-    //   if (res.status == 200) {
-    //     console.log(safe)
-    //   }
-    // })
+  const handleSafe = async (safeId) => {
+    try {
+      if (!safeId) {
+        return toast.error("Safe Id not provided!", {
+          hideProgressBar: true,
+          icon: false,
+        });
+      }
+      body.safeId = safeId
+      await API.createSafe(body).then((res) => {
+        if (res.status == 200) {
+          console.log(res)
+          return toast.success("Safe created Successfully!", {
+            hideProgressBar: true,
+            icon: false,
+          });
+        }
+      })
+    } catch (err) {
+      console.log(err)
+      return toast.success("Error Creating Safe", {
+        hideProgressBar: true,
+        icon: false,
+      });
+    }
   }
 
 
@@ -172,8 +193,101 @@ const CreateSafe = () => {
 
 
 
+  const handleControllers = async () => {
+    body.emissaryId = emissary._id
+    await API.getEmissaryController(body).then((res) => {
+      if (res.status == 200) {
+        setEmissaryControllers(res.data.data)
+      }
+    })
+  }
+
+  const handleValidation = (e) => {
+    e.preventDefault()
+    if (!body.name) {
+      return toast.error("Please provide Safe name!", {
+        hideProgressBar: true,
+        icon: false,
+      });
+    }
+
+    if (!body.desc) {
+      return toast.error("Please provide a description for Safe!", {
+        hideProgressBar: true,
+        icon: false,
+      });
+    }
+
+
+    if (!body.assets) {
+      return toast.error("Please provide a asset for Safe!", {
+        hideProgressBar: true,
+        icon: false,
+      });
+    }
+
+    body.recipientWalletAddress = recipientAddress
+
+    if (!recipientAddress) {
+      return toast.error("Please provide a recipient address for safe!", {
+        hideProgressBar: true,
+        icon: false,
+      });
+    }
+
+    body.approvers = ["0x9cdc76c6C06406Cef05Ff4f5fA1f53Ac30cCB348", "0x53003d04bd231e5c1961e061d59bd1d2ff76c21a"]
+
+    if (!confirm) {
+      return toast.error("Please select approvers for safe!", {
+        hideProgressBar: true,
+        icon: false,
+      });
+    }
+
+    body.approversCount = confirm
+
+    if (!checkBoxVal && !checkBoxValOne) {
+      return toast.error("Please select lumsum release or milestone release for safe!", {
+        hideProgressBar: true,
+        icon: false,
+      });
+    }
+
+    if (checkBoxVal == true) {
+      body.lumSumRelease = true
+      delete body['mileStoneReleaseAmount'];
+      delete body['mileStoneRelease']
+      if (!body.lumSumReleaseAmount) {
+        return toast.error("Please select lumsum amount release for safe!", {
+          hideProgressBar: true,
+          icon: false,
+        });
+      }
+    }
+
+    if (checkBoxValOne == true) {
+      body.mileStoneRelease = true
+      delete body['lumSumReleaseAmount'];
+      delete body['lumSumRelease'];
+      if (!body.mileStoneReleaseAmount) {
+        return toast.error("Please select milestone amount release for safe!", {
+          hideProgressBar: true,
+          icon: false,
+        });
+      }
+    }
+
+    console.log(body)
+  }
+
+
+  useEffect(() => {
+    handleControllers()
+  }, [])
+
   return (
     <AddSafeStyles>
+      <ToastContainer />
       <span className="strog">Create a safe</span>
       <form action="">
         <CombineInput
@@ -195,15 +309,14 @@ const CreateSafe = () => {
         </div>
         <span className="label">Choose your asset</span>
         <AssetsDropDown
-          onChange={(value) => body.assets = value.program}
+          onChange={(value) => body.asset = value.program}
           selectedValue={assetsValue}
           setSelectedValue={setAssetsValue}
         />
         <CombineInput
-          onChange={(e) => body.recipientWalletAddress = e.target.value}
+          onChange={(e) => setRecipientAddress(e.target.value)}
           label="Recipient Wallet Address"
           value={recipientAddress}
-
           placeholder="Example: 5D25X4qhiqpv8ELXMQH5pejGGsoePoo3RFiZiq4N5RHLJKAF"
         />
         <ApprovalDropdown>
@@ -214,16 +327,16 @@ const CreateSafe = () => {
             approvers from your list of emissary controllers and they will need
             to use their wallet to approve any transactions to the recipient.
           </p>
-          {Array.from({ length: confirm.approval || 1 }, (_, index) => (
+          {Array.from({ length: confirm || 1 }, (_, index) => (
             <ApprovalDropDown
               key={index}
-              approverAddresses={body}
-              onChange={(value) => console.log(value)}
-              selectedValue={signatureValue}
-              setSelectedValue={setSignatureValue}
-              setEmissaryRole={setEmissaryRoles}
+              onChange={(address) => console.log()}
+              selectedValue={selectedAddresses[index] || "Select Approval Signature"}
+              // setSelectedValue={setSelectedAddresses}
+              // setEmissaryRole={setEmissaryRoles}
+              setEmissaryControllers={setEmissaryControllers}
+              emissaryControlers={emissaryControlers}
             />
-
           ))}
         </ApprovalDropdown>
         <ConfirmationStyle>
@@ -233,7 +346,7 @@ const CreateSafe = () => {
           <div className="count-wrapp">
             <TotalApprovalDropDown
               className="total-number-approval"
-              onChange={(params) => setConfirm(params)}
+              onChange={(params) => { setConfirm(params) }}
               setSelectedValue={setConfirm}
               selectedValue={confirm}
             />
@@ -305,8 +418,8 @@ const CreateSafe = () => {
               Clear
             </Button>
             <Button onClick={(e) =>
-              handleSafe()
-              // createSafeContract(e)
+              // handleValidation(e)
+              createSafeContract(e)
             } variant="primary">Create</Button>
           </div>
           <div className="totalAmount">

@@ -25,5 +25,6 @@ export const API = {
 
     // Safe API's
 
-    createSafe: (body) => request.post(base_url + "/safe/create-safe", body)
+    createSafe: (body) => request.post(base_url + "/safe/create-safe", body),
+    getUserSafe: () => request.get(base_url + "/safe/get-user-safes",)
 };

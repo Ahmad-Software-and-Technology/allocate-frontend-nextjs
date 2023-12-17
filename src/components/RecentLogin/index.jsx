@@ -38,27 +38,6 @@ const RecentLogin = () => {
           </div>
           <span className="text">{data.lastLogin}</span>
         </li>))}
-        {/* <li>
-          <div className="img-box">
-            <Image src={proverImg} alt="provers" />
-            <span className="name">Provers</span>
-          </div>
-          <span className="text">Recently login 4 hours ago</span>
-        </li>
-        <li>
-          <div className="img-box">
-            <Image src={someSingImg} alt="somesign" />
-            <span className="name">SomeSing</span>
-          </div>
-          <span className="text">Recently login 5 hours ago</span>
-        </li>
-        <li>
-          <div className="img-box">
-            <Image src={someSingImg} alt="somesign" />
-            <span className="name">SomeSing</span>
-          </div>
-          <span className="text">Recently login 5 hours ago</span>
-        </li> */}
       </ul>
     </LoginColumn>
   );

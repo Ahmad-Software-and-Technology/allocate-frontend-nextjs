@@ -8,56 +8,38 @@ import {
 import { useSelector } from "react-redux";
 import { API } from "@/service/api/api";
 
-const ApprovalDropDown = ({ onChange, selectedValue, setSelectedValue, setEmissaryRole }) => {
+const ApprovalDropDown = ({ onChange, selectedValue, setSelectedValue, emissaryControlers }) => {
   const [openDropDown, setOpenDropDown] = useState(false);
   const emissary = useSelector((state) => state.emissary.emissary);
   const [body, setBody] = useState({});
-  const [emissaryRoles, setEmissaryRoles] = useState([]);
-  const [selectedValues, setSelectedValues] = useState([]);
 
-  function handelChange(e, selectedValue) {
+
+
+  function handleChange(e, selectedValue) {
     e.stopPropagation();
     console.log(selectedValue.userAddress)
-    setSelectedValue(selectedValue);
+    // setSelectedValue(selectedValue.userAddress);
+    // onChange(selectedValue);
     setOpenDropDown(false);
   }
 
 
-  const handleControllers = async () => {
-    body.emissaryId = emissary._id
-    await API.getEmissaryController(body).then((res) => {
-      if (res.status == 200) {
-        setEmissaryRoles(res.data.data)
-        setEmissaryRole(res.data.data.length)
-      }
-    })
-  }
+
+
+
+
 
 
   useEffect(() => {
-    handleControllers()
-  }, [])
-
-  const handleChange = (e, newValue) => {
-    e.stopPropagation();
-    const newValues = selectedValues.includes(newValue)
-      ? selectedValues.filter(value => value !== newValue)
-      : [...selectedValues, newValue];
-
-    setSelectedValues(newValues);
-    setOpenDropDown(false);
-  };
-
-  useEffect(() => {
-    onChange(selectedValues);
-  }, [onChange, selectedValues]);
+    onChange(selectedValue.userAddress);
+  }, [onChange, selectedValue]);
 
 
 
   return (
     <ProgramDrop>
       <DropDownListWrapper onClick={() => setOpenDropDown(!openDropDown)}>
-        {selectedValue?.userAddress ? (
+        {selectedValue.userAddress ? (
           <>{selectedValue.userAddress}</>
         ) : (
           "Select Approval Signature"
@@ -78,8 +60,8 @@ const ApprovalDropDown = ({ onChange, selectedValue, setSelectedValue, setEmissa
           </svg>
         </span>
         <DropDownAssetsItem display={openDropDown ? "block" : "none"}>
-          {emissaryRoles?.map((elem, ind) => (
-            <li key={ind} onClick={(e) => handelChange(e, elem)}>
+          {emissaryControlers?.slice(0, 5).map((elem, ind) => (
+            <li key={ind} onClick={(e) => handleChange(e, elem)}>
               {elem.userAddress}{" "}
             </li>
           ))}
