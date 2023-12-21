@@ -12,7 +12,7 @@ import USDT from "../../../public/USDT.png";
 import XET from "../../../public/XET.png";
 import Image from "next/image";
 
-const RoleDropDown = ({ onChange, selectedValue, setSelectedValue }) => {
+const RoleDropDown = ({ onChange, selectedValue, setSelectedValue, roles }) => {
   const [openDropDown, setOpenDropDown] = useState(false);
   // const [selectedValue, setSelectedValue] = useState(
   //   "  Select name of the program"
@@ -41,6 +41,7 @@ const RoleDropDown = ({ onChange, selectedValue, setSelectedValue }) => {
   ];
   function handelChange(e, selectedValue) {
     e.stopPropagation();
+    console.log(selectedValue.roleType)
     setSelectedValue(selectedValue);
     setOpenDropDown(false);
   }
@@ -52,7 +53,7 @@ const RoleDropDown = ({ onChange, selectedValue, setSelectedValue }) => {
     <ProgramDrop>
       {/* <label htmlFor="">Program</label> */}
       <DropDownListWrapper onClick={() => setOpenDropDown(!openDropDown)}>
-        {selectedValue?.role ? <>{selectedValue.role}</> : "Select an access"}{" "}
+        {selectedValue ? <>{selectedValue.roleType}</> : "Select an access"}
         <span
           className="dropDownIcon"
           onClick={() => setOpenDropDown(!openDropDown)}
@@ -68,9 +69,9 @@ const RoleDropDown = ({ onChange, selectedValue, setSelectedValue }) => {
           </svg>
         </span>
         <DropDownAssetsItem display={openDropDown ? "block" : "none"}>
-          {ProgramArray.map((elem, ind) => (
+          {roles.map((elem, ind) => (
             <li key={ind} onClick={(e) => handelChange(e, elem)}>
-              {elem.role}{" "}
+              {elem.roleType}{" "}
             </li>
           ))}
         </DropDownAssetsItem>

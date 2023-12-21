@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import logoImg from "../../../public/klaytn-logo.svg";
+import logoImg from "../../../public/injective.png";
 import { WelcomeColumn } from "./WelcomeEmissary.styles";
 
 const WelcomeEmissary = () => {
@@ -9,7 +9,7 @@ const WelcomeEmissary = () => {
       <div className="wrap">
         <strong className="title">
           Welcome to
-          <br /> Klaytn DAO’s Emissary.
+          <br /> Injective DAO’s Emissary.
         </strong>
         <div className="logo-box">
           <Image src={logoImg} alt="img description" />

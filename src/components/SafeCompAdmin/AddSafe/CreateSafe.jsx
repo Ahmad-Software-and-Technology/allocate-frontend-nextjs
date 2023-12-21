@@ -204,13 +204,14 @@ const CreateSafe = () => {
 
   const handleValidation = (e) => {
     e.preventDefault()
+    console.log(body)
     if (!body.name) {
       return toast.error("Please provide Safe name!", {
         hideProgressBar: true,
         icon: false,
       });
     }
-
+    console.log(body)
     if (!body.desc) {
       return toast.error("Please provide a description for Safe!", {
         hideProgressBar: true,
@@ -218,14 +219,14 @@ const CreateSafe = () => {
       });
     }
 
-
-    if (!body.assets) {
+    console.log(body)
+    if (!body.asset) {
       return toast.error("Please provide a asset for Safe!", {
         hideProgressBar: true,
         icon: false,
       });
     }
-
+    console.log(body)
     body.recipientWalletAddress = recipientAddress
 
     if (!recipientAddress) {
@@ -234,7 +235,7 @@ const CreateSafe = () => {
         icon: false,
       });
     }
-
+    console.log(body)
     body.approvers = ["0x9cdc76c6C06406Cef05Ff4f5fA1f53Ac30cCB348", "0x53003d04bd231e5c1961e061d59bd1d2ff76c21a"]
 
     if (!confirm) {
@@ -243,7 +244,7 @@ const CreateSafe = () => {
         icon: false,
       });
     }
-
+    console.log(body)
     body.approversCount = confirm
 
     if (!checkBoxVal && !checkBoxValOne) {
@@ -252,7 +253,7 @@ const CreateSafe = () => {
         icon: false,
       });
     }
-
+    console.log(body)
     if (checkBoxVal == true) {
       body.lumSumRelease = true
       delete body['mileStoneReleaseAmount'];
@@ -264,7 +265,7 @@ const CreateSafe = () => {
         });
       }
     }
-
+    console.log(body)
     if (checkBoxValOne == true) {
       body.mileStoneRelease = true
       delete body['lumSumReleaseAmount'];

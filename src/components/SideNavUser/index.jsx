@@ -5,11 +5,23 @@ import Link from "next/link";
 import { FaRegCircleUser } from "react-icons/fa6";
 import { MainSideBar, Nav, UserController } from "./SideNavUser.styles";
 import { useRouter } from "next/router";
+import { useSelector } from "react-redux";
+import { getUser } from "@/service/storage/storage";
 
 function SideNavUser() {
   const router = useRouter();
   console.log(router.pathname);
+  const user = getUser()
+  console.log(user)
   const [activeLink, setActiveLink] = useState(router.pathname);
+  const emissary = useSelector((state) => state.emissary.emissary);
+
+  const shorten = (address) => {
+    if (address?.length > 10) {
+      return `${address.substring(0, 4)}...${address.substring(address.length - 4)}`;
+    }
+    return address;
+  };
 
   const handleLinkClick = (link) => {
     setActiveLink(link);
@@ -19,7 +31,7 @@ function SideNavUser() {
     <MainSideBar>
       <div className="logo">
         <Link href="/">
-          <Image src={Logo} alt="klaytn" />
+          <Image width={200} height={100} src={emissary?.logo} alt="klaytn" />
         </Link>
       </div>
       <Nav>
@@ -29,8 +41,8 @@ function SideNavUser() {
               activeLink == "/user/transfer-request"
                 ? "active"
                 : activeLink == "/user/transfer-requests"
-                ? "active"
-                : ""
+                  ? "active"
+                  : ""
             }
           >
             <Link href="/user/transfer-request">Transfer Requests</Link>
@@ -55,7 +67,7 @@ function SideNavUser() {
         <div className="icon-box">
           <FaRegCircleUser size="22" />
         </div>
-        <span className="name">8Eo3...KAFL</span>
+        <span className="name">{shorten(user?.address)}</span>
         <button type="button" className="btn">
           User
         </button>

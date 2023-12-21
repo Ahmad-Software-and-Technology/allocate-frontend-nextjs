@@ -176,41 +176,194 @@ import {
 import nftGif from "../../../public/nftCreation.gif";
 import NftCreated from "./NftCreatedComp";
 import AutoSubmittedComp from "./AutoSubmittedComp";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import { API } from "@/service/api/api";
+import { useSelector } from "react-redux";
+
+
 const ProgramCreation = () => {
   const [uploadedNft, setUploadedNft] = useState("");
-  const [toggleform, setToggleform] = useState(false);
-  const [toggleform1, setToggleform1] = useState(false);
-  const [toggleform2, setToggleform2] = useState(false);
+  const [selectedCheckbox, setSelectedCheckbox] = useState("");
+  const emissary = useSelector((state) => state.emissary.emissary);
+  const [body, setBody] = useState({})
 
-  //using 3rd CheckBox
+  console.log(body)
+  console.log(selectedCheckbox)
 
-  // if (true) {
-  //   return <AutoSubmittedComp />;
-  // }
-  //using Second CheckBox
-  // if (true) {
-  //   return (
-  //     <NftDetailWrapper>
-  //       <NftCreationprocess>
-  //         <div className="imageWrappe">
-  //           <Image src={nftGif} alt="nft creation" />
-  //         </div>
-  //         <h6>Creating your NFT collection...</h6>
-  //         <span className="alert">
-  //           Process with the gas fee in order to mint your NFT <br /> Do not
-  //           close the window during this process
-  //         </span>
-  //       </NftCreationprocess>
-  //       <NftCreated />
-  //     </NftDetailWrapper>
-  //   );
-  // }
+  const handleCheckboxChange = (checkboxId) => {
+    setSelectedCheckbox(checkboxId);
+  };
+
+  const handleProgram = (e) => {
+    e.preventDefault();
+    const isValid = handleValidation();
+
+    if (!isValid) {
+      return;
+    }
+
+    const formData = new FormData();
+    for (const key in body) {
+      if (Object.prototype.hasOwnProperty.call(body, key)) {
+        formData.append(key, body[key]);
+      }
+    }
+
+    if (uploadedNft instanceof File) {
+      formData.append('file', uploadedNft);
+    }
+
+    API.createProgram(formData).then((res) => {
+      if (res.status === 200) {
+        setSelectedCheckbox("")
+        setBody({})
+        setUploadedNft("");
+        return toast.success("Program created successfully!", {
+          hideProgressBar: true,
+          icon: false,
+        });
+      }
+    });
+  };
+
+  const handleValidation = () => {
+    if (!body.name) {
+      toast.error("Please enter program name!", {
+        hideProgressBar: true,
+        icon: false,
+      });
+      return false;
+    }
+
+    const fieldsToRemove = {
+      program: ['nftRedemption', 'title', 'titleVerify', 'description', 'symbol', 'nftImage', 'autoNFTContractRequestCurrency', 'autoNFTContractAddress', 'autoNFTContractRequestAmount'],
+      redemption: ['tokenGatedNFTProgram', 'tokenGatedNFTContractAddress', 'autoNFTContractAddress', 'autoNFTContractRequestAmount', 'autoNFTContractRequestCurrency'],
+      Submission: ['nftRedemption', 'title', 'titleVerify', 'description', 'symbol', 'nftImage', 'tokenGatedNFTProgram', 'tokenGatedNFTContractAddress'],
+    };
+
+    // Set all fields to false initially
+    body.tokenGatedNFTProgram = false;
+    body.nftRedemption = false;
+    body.nftAutoRequestSubmission = false;
+    body.emissaryId = emissary._id;
+
+    // Set the selected field to true
+    if (selectedCheckbox === 'program') {
+      console.log("program")
+      body.tokenGatedNFTProgram = true;
+      if (!body.tokenGatedNFTContractAddress) {
+        toast.error("Please enter your NFT contract address!", {
+          hideProgressBar: true,
+          icon: false,
+        });
+        return false;
+      }
+    } else if (selectedCheckbox === 'redemption') {
+      console.log("redem")
+      body.nftRedemption = true;
+      if (!body.title) {
+        toast.error("Please enter title!", {
+          hideProgressBar: true,
+          icon: false,
+        });
+        return false;
+      }
+
+      if (!body.description) {
+        toast.error("Please enter description!", {
+          hideProgressBar: true,
+          icon: false,
+        });
+        return false;
+      }
+
+      if (!body.symbol) {
+        toast.error("Please enter symbol!", {
+          hideProgressBar: true,
+          icon: false,
+        });
+        return false;
+      }
+
+      if (!body.file) {
+        toast.error("Please select your NFT Image!", {
+          hideProgressBar: true,
+          icon: false,
+        });
+        return false;
+      }
+
+
+      if (!body.titleVerify) {
+        toast.error("Please Enter  Verify Title name for the final check", {
+          hideProgressBar: true,
+          icon: false,
+        });
+        return false;
+      }
+
+      if (body.title != body.titleVerify) {
+        toast.error("Title Name Verify Title name for the final check does not matches!", {
+          hideProgressBar: true,
+          icon: false,
+
+        });
+        return false;
+      }
+    } else if (selectedCheckbox === 'Submission') {
+      console.log("submission")
+      body.nftAutoRequestSubmission = true;
+      if (!body.autoNFTContractRequestCurrency) {
+        toast.error("Please Select NFT Contract Currency!", {
+          hideProgressBar: true,
+          icon: false,
+        });
+        return false;
+      }
+
+      if (!body.autoNFTContractRequestAmount) {
+        toast.error("Please enter your NFT Contract Address!", {
+          hideProgressBar: true,
+          icon: false,
+        });
+        return false;
+      }
+
+      if (!body.autoNFTContractAddress) {
+        toast.error("Please enter your NFT Contract Address!", {
+          hideProgressBar: true,
+          icon: false,
+        });
+        return false;
+      }
+    }
+
+    // Check if the selectedCheckbox is valid and remove fields accordingly
+    if (fieldsToRemove[selectedCheckbox]) {
+      fieldsToRemove[selectedCheckbox].forEach(field => delete body[field]);
+    } else {
+      console.warn("Selected checkbox does not match any known type");
+    }
+
+    return true
+  };
+
+
+
+
+
+
   return (
     <>
       <ProgramStyled>
+        <ToastContainer />
         <div className="heading">Create programs</div>
         <div className="inputWrapper">
-          <CombineInput label="Program name" />
+          <CombineInput
+            value={body.name || ''}
+            onChange={(e) => setBody({ ...body, name: e.target.value })}
+            label="Program name" />
         </div>
         {/* first check Box item */}
         <div className="checkBoxWrapper">
@@ -219,11 +372,8 @@ const ProgramCreation = () => {
             id="program"
             For="program"
             label="Set as token-gated (NFT) program"
-            onChange={(e) =>
-              e.target.checked == true
-                ? setToggleform(true)
-                : setToggleform(false)
-            }
+            checked={selectedCheckbox === "program"}
+            onChange={() => handleCheckboxChange("program")}
           />
 
           <div className="formWrapper">
@@ -232,9 +382,9 @@ const ProgramCreation = () => {
               program. You can perfectly <br /> restrict clients who are not
               related to this program to create a transfer request.
             </p>
-            {toggleform && (
+            {selectedCheckbox === "program" && (
               <div className="borderform">
-                <CombineInput label="NFT contract address" />
+                <CombineInput onChange={(e) => body.tokenGatedNFTContractAddress = e.target.value} label="NFT contract address" />
               </div>
             )}
           </div>
@@ -246,11 +396,8 @@ const ProgramCreation = () => {
             id="redemption"
             For="redemption"
             label="Setup NFT redemption"
-            onChange={(e) =>
-              e.target.checked == true
-                ? setToggleform1(true)
-                : setToggleform1(false)
-            }
+            checked={selectedCheckbox === "redemption"}
+            onChange={() => handleCheckboxChange("redemption")}
           />
           <div className="formWrapper">
             <p>
@@ -259,16 +406,17 @@ const ProgramCreation = () => {
               and successfully get paid, they can go to the NFT redemption tab
               to claim their NFT. Perfect for event related programs!
             </p>
-            {toggleform1 && (
+            {selectedCheckbox === "redemption" && (
               <div className="borderform">
-                <CombineInput label="Title" className="input" />
+                <CombineInput label="Title" onChange={(e) => body.title = e.target.value} className="input" />
                 <span>This is the name of your NFT collection</span>
-                <CombineInput label="Description" className="input" />
+                <CombineInput label="Description" onChange={(e) => body.description = e.target.value} className="input" />
                 <span>
                   Briefly describe what’s your NFT collection is about
                 </span>
                 <CombineInput
                   label="Symbol"
+                  onChange={(e) => body.symbol = e.target.value}
                   placeholder="Example: PYTHON"
                   className="input"
                 />
@@ -299,7 +447,7 @@ const ProgramCreation = () => {
                       id="upload"
                       type="file"
                       accept=".png , .jpg , .gif"
-                      onChange={(e) => setUploadedNft(e.target.files[0])}
+                      onChange={(e) => setBody({ ...body, file: e.target.files[0] })}
                     />
                   </div>
                 </UploadImage>
@@ -310,7 +458,7 @@ const ProgramCreation = () => {
                     publishing this course. As once the NFT contract is
                     deployed, it cant be changed anymore.
                   </p>
-                  <CombineInput label="Type your title of NFT collection again to confirm the final check." />
+                  <CombineInput onChange={(e) => body.titleVerify = e.target.value} label="Type your title of NFT collection again to confirm the final check." />
                 </FinalCheck>
               </div>
             )}
@@ -323,10 +471,8 @@ const ProgramCreation = () => {
             id="Submission"
             For="Submission"
             label="Setup NFT Auto Request Submission"
-            onChange={(e) =>
-             setToggleform2(e.target.checked) 
-               
-            }
+            checked={selectedCheckbox === "Submission"}
+            onChange={() => handleCheckboxChange("Submission")}
           />
           <div className="formWrapper">
             <p>
@@ -337,14 +483,14 @@ const ProgramCreation = () => {
               automatically fill in for him/her. Perfect to a program where the
               amount of transfer request is the same!
             </p>
-            {toggleform2 && (
+            {selectedCheckbox === "Submission" && (
               <div className="borderform">
-                <CombineInput label="NFT Contract Address" />
+                <CombineInput onChange={(e) => body.autoNFTContractAddress = e.target.value} label="NFT Contract Address" />
                 <div className="amountDrop">
-                  <CombineInput label="Request amount" />
+                  <CombineInput onChange={(e) => body.autoNFTContractRequestAmount = e.target.value} label="Request amount" />
                   <PaymentDropDown
                     label=""
-                    onChange={(param) => console.log(param)}
+                    onChange={(param) => body.autoNFTContractRequestCurrency = param.program}
                     className="amount"
                   />
                 </div>
@@ -356,7 +502,7 @@ const ProgramCreation = () => {
           <Button variant="outline" type="reset">
             Clear
           </Button>
-          <Button variant="primary">Submit</Button>
+          <Button onClick={(e) => handleProgram(e)} variant="primary">Submit</Button>
         </div>
       </ProgramStyled>
       {/* when second checkBox is checked and form is submitted this part will work */}

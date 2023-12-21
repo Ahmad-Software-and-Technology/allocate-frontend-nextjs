@@ -30,7 +30,7 @@ const LaunchExistingEmissary = () => {
       await API.getUserEmissaryWithUniqueCode(body).then((res) => {
         if (res.status == 200) {
           dispatch(storeEmissary(res.data.data));
-          if (user.address == res?.data?.data?.ownerAddress) {
+          if (user.address == res?.data?.data?.ownerAddress || user.role == "Admin") {
             router.push("/admin/transfer-request")
           } else {
             router.push("/user/transfer-request")

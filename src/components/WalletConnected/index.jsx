@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Image from "next/image";
-import walletImg from "../../../public/walletIcon.png";
+import walletImg from "../../../public/MetaMask_Fox.svg.webp";
 import Button from "../Button/Button";
 import { WalletColumn } from "./WalletConnected.styles";
 import { useRouter } from "next/router";
@@ -161,7 +161,7 @@ const WalletConnected = ({ isConnected, setIsConnected }) => {
         <div className="icon-box">
           <Image src={walletImg} alt="img description" />
         </div>
-        <strong className="title">Keplr Wallet</strong>
+        <strong className="title">Metamask Wallet</strong>
 
         <div className="btn-holder">
           <Button onClick={() => walletConnected ? handleConnectAndNavigation() : handleConnect()} variant="primary" width="200">

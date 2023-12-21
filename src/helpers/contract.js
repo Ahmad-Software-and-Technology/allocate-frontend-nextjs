@@ -2,7 +2,7 @@
 
 const batchTransfers = "0xf9b0ddA0bC54657d9BdB8e659Dbb7B97E2FC34b0"
 
-const milestoneSafe = "0x18016f630DbE5Ef9D9725C10AbfB43eD316925a4"
+const milestoneSafe = "0x71097Cba9074B77A908f2a8E90F6487a0a818394"
 
 const MultiSigSafe = "0xab308b37Ed19Ae6093A5f67f8a638f2e234E011b"
 

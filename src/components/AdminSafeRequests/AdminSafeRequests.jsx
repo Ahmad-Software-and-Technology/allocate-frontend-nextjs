@@ -40,7 +40,7 @@ const AdminSafeRequests = ({ safes, setAddSafe, setShowSafes }) => {
                             <div className="wrapper">
                                 <div className="item">
                                     <span className="id">{data.safeId}</span>
-                                    <Link href="/user/safes/example-1">
+                                    <Link href={`/admin/safes/${data.safeId}`}>
                                         <span className="link">Details</span>
                                     </Link>
                                 </div>

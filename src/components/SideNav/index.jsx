@@ -5,13 +5,24 @@ import Link from "next/link";
 import { FaRegCircleUser } from "react-icons/fa6";
 import { MainSideBar, Nav, UserController } from "./SideNav.styles";
 import { useRouter } from "next/router";
+import { getUser } from "@/service/storage/storage";
+import { useSelector } from "react-redux";
 
 function SideNav() {
   const router = useRouter();
   const [activeLink, setActiveLink] = useState(router.pathname);
+  const emissary = useSelector((state) => state.emissary.emissary);
+  const user = getUser()
 
   const handleLinkClick = (link) => {
     setActiveLink(link);
+  };
+
+  const shorten = (address) => {
+    if (address?.length > 10) {
+      return `${address.substring(0, 4)}...${address.substring(address.length - 4)}`;
+    }
+    return address;
   };
 
   const handleClick = () => {
@@ -22,7 +33,7 @@ function SideNav() {
     <MainSideBar>
       <div className="logo">
         <Link href="/">
-          <Image src={Logo} alt="klaytn" />
+          <Image width={200} height={100} src={emissary?.logo} alt="klaytn" />
         </Link>
       </div>
       <Nav>
@@ -78,7 +89,7 @@ function SideNav() {
         <div className="icon-box">
           <FaRegCircleUser size="22" />
         </div>
-        <span className="name">8Eo3...KAFL</span>
+        <span className="name">{shorten(user?.address)}</span>
         <button type="button" className="btn">
           Contoller
         </button>

@@ -2,12 +2,34 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import nft from "../../../public/nft.png";
 import { DropDownItem, DropDownListWrapper, ProgramDrop } from "./Input.styles";
+import { API } from "@/service/api/api";
+import { useSelector } from "react-redux";
 
 const ProgramDropDown = ({ onChange, selectedValue, setSelectedValue }) => {
   const [openDropDown, setOpenDropDown] = useState(false);
-  // const [selectedValue, setSelectedValue] = useState(
-  //   "  Select name of the program"
-  // );
+  const emissary = useSelector((state) => state.emissary.emissary);
+  console.log(emissary)
+  const [programs, setPrograms] = useState([])
+
+
+  const handlePrograms = async () => {
+    const body = {
+      emissaryId: emissary?._id
+    }
+    await API.getEmissaryPrograms(body).then((res) => {
+      if (res.status == 200) {
+        console.log(res)
+        setPrograms(res.data.data)
+      }
+    })
+  }
+
+
+  useEffect(() => {
+    handlePrograms()
+  }, [])
+
+
   const ProgramArray = [
     {
       id: 1,
@@ -43,7 +65,7 @@ const ProgramDropDown = ({ onChange, selectedValue, setSelectedValue }) => {
   ];
   function handelChange(e, selectedValue) {
     e.stopPropagation();
-    setSelectedValue(selectedValue);
+    setSelectedValue(selectedValue?.name);
     setOpenDropDown(false);
   }
   useEffect(() => {
@@ -72,10 +94,10 @@ const ProgramDropDown = ({ onChange, selectedValue, setSelectedValue }) => {
           </svg>
         </span>
         <DropDownItem display={openDropDown ? "block" : "none"}>
-          {ProgramArray.map((elem, ind) => (
+          {programs?.map((elem, ind) => (
             <li key={ind} onClick={(e) => handelChange(e, elem)}>
-              {elem.program}{" "}
-              {elem.img && <Image src={elem?.img} alt="coinImage" />}
+              {elem.name}{" "}
+              {/* {elem.img && <Image src={elem?.img} alt="coinImage" />} */}
             </li>
           ))}
         </DropDownItem>
