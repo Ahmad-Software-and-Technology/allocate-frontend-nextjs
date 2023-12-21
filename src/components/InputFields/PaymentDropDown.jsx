@@ -8,7 +8,7 @@ import {
 import nft from "../../../public/nft.png";
 import klay from "../../../public/klayLogo.png";
 import Image from "next/image";
-const PaymentDropDown = ({ onChange, className, label = "Program" }) => {
+const PaymentDropDown = ({ onChange, className, label = "Program", selectedAssets }) => {
   const [openDropDown, setOpenDropDown] = useState(false);
   const [selectedValue, setSelectedValue] = useState({
     program: "KLAY",
@@ -49,15 +49,15 @@ const PaymentDropDown = ({ onChange, className, label = "Program" }) => {
     <ProgramDrop className={className}>
       <label htmlFor="">{label}</label>
       <DropDownListWrapper onClick={() => setOpenDropDown(!openDropDown)}>
-        {selectedValue.img && (
+        {selectedAssets?.img && (
           <Image
-            src={selectedValue?.img}
+            src={selectedAssets?.img}
             alt="coinImage"
             width={17}
             height={17}
           />
         )}
-        {selectedValue.program}{" "}
+        {selectedAssets?.program}{" "}
         <span
           className="dropDownIcon"
           onClick={() => setOpenDropDown(!openDropDown)}
@@ -73,11 +73,11 @@ const PaymentDropDown = ({ onChange, className, label = "Program" }) => {
           </svg>
         </span>
         <PaymentDropDownItem display={openDropDown ? "block" : "none"}>
-          {ProgramArray.map((elem, ind) => (
-            <li key={ind} onClick={(e) => handelChange(e, elem)}>
-              {elem.program}
-            </li>
-          ))}
+
+          <li>
+            {selectedAssets?.program}
+          </li>
+
         </PaymentDropDownItem>
       </DropDownListWrapper>
     </ProgramDrop>

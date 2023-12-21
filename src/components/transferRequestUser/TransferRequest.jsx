@@ -39,7 +39,7 @@ const TransferRequest = () => {
   }
   function handelSubmit(e) {
     e.preventDefault();
-    router.push("/user/transfer-requests");
+    // router.push("/user/transfer-requests");
   }
 
   useEffect(() => {

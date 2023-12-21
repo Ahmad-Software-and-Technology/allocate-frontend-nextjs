@@ -41,8 +41,9 @@ const CreateSafe = () => {
   const emissary = useSelector((state) => state.emissary.emissary);
   const [emissaryControlers, setEmissaryControllers] = useState([]);
   const [selectedAddresses, setSelectedAddresses] = useState([]);
+  const [selectedAssets, setSelectedAssets] = useState({})
 
-
+  console.log(selectedAssets)
 
   const convertToWei = (amountsInEther) => {
     return amountsInEther.map(amount => ethers.utils.parseEther(amount));
@@ -310,7 +311,7 @@ const CreateSafe = () => {
         </div>
         <span className="label">Choose your asset</span>
         <AssetsDropDown
-          onChange={(value) => body.asset = value.program}
+          onChange={(value) => { body.asset = value.program, setSelectedAssets(value) }}
           selectedValue={assetsValue}
           setSelectedValue={setAssetsValue}
         />
@@ -380,6 +381,7 @@ const CreateSafe = () => {
               <div className="amountDrop">
                 <CombineInput onChange={(e) => body.lumSumReleaseAmount = e.target.value} label="Release amount" />
                 <PaymentDropDown
+                  selectedAssets={selectedAssets}
                   label=""
                   onChange={(param) => console.log(param)}
                   className="amount"
@@ -425,7 +427,7 @@ const CreateSafe = () => {
           </div>
           <div className="totalAmount">
             <p>Initial asset in safe</p>
-            <span className="span">120 KLAY</span>
+            <span className="span">{body.lumSumReleaseAmount} {body?.asset}</span>
           </div>
         </div>
       </form>

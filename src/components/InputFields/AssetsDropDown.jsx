@@ -25,12 +25,6 @@ const AssetsDropDown = ({ onChange, selectedValue, setSelectedValue }) => {
       address: ""
     },
     {
-      id: 2,
-      program: "XET",
-      img: XET,
-      address: ""
-    },
-    {
       id: 3,
       program: "INJ",
       img: injLogo,
@@ -41,13 +35,7 @@ const AssetsDropDown = ({ onChange, selectedValue, setSelectedValue }) => {
       program: "USDT",
       img: USDT,
       address: "0xa9517f5E9fEBD8b87E91086d8DBee43699258Bf5"
-    },
-    {
-      id: 5,
-      program: "Planets",
-      img: Planets,
-      address: ""
-    },
+    }
   ];
   function handelChange(e, selectedValue) {
     e.stopPropagation();

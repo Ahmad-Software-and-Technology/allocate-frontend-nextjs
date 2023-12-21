@@ -46,7 +46,7 @@ const AdminSafeRequests = ({ safes, setAddSafe, setShowSafes }) => {
                                 </div>
                                 <div className="item">
                                     <span className="projectName">{data.name} </span>
-                                    <span className="program">Transfer Request</span>
+                                    <span className="program">Safes</span>
                                 </div>
                             </div>
                             <div className="wrapper">

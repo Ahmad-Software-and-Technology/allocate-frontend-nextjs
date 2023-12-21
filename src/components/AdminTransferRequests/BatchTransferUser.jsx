@@ -25,7 +25,7 @@ const AdminTransferRequests = () => {
         </div>
         <Button variant="primary">Filter</Button>
       </FilterBar>
-      <TransferListWrapper>
+      {/* <TransferListWrapper>
         <TransferList>
           <div className="wrapper">
             <div className="item">
@@ -72,7 +72,7 @@ const AdminTransferRequests = () => {
             </div>
           </div>
         </TransferList>
-      </TransferListWrapper>
+      </TransferListWrapper> */}
     </TransferUserListStyle>
   );
 };

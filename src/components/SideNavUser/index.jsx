@@ -31,7 +31,7 @@ function SideNavUser() {
     <MainSideBar>
       <div className="logo">
         <Link href="/">
-          <Image width={200} height={100} src={emissary?.logo} alt="klaytn" />
+          <Image width={100} height={100} src={emissary?.logo} alt="klaytn" />
         </Link>
       </div>
       <Nav>

@@ -162,7 +162,7 @@ export const NftCreationprocess = styled.div`
 const NftCreation = () => {
   return (
     <NftWrapper>
-      {NFTRedemptionData.map((elem, ind) => (
+      {/* {NFTRedemptionData.map((elem, ind) => (
         <NftStyles key={ind}>
           <div className="Text">
             <strong>{elem.title}</strong>
@@ -172,7 +172,7 @@ const NftCreation = () => {
             <Button variant="outline">Mint</Button>
           </Link>
         </NftStyles>
-      ))}
+      ))} */}
     </NftWrapper>
   );
 };

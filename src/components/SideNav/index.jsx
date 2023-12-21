@@ -33,7 +33,7 @@ function SideNav() {
     <MainSideBar>
       <div className="logo">
         <Link href="/">
-          <Image width={200} height={100} src={emissary?.logo} alt="klaytn" />
+          <Image width={100} height={100} src={emissary?.logo} alt="klaytn" />
         </Link>
       </div>
       <Nav>
@@ -84,6 +84,7 @@ function SideNav() {
             <Link href="/emissary-settings">Emissary Settings</Link>
           </li>
         </ul>
+
       </Nav>
       <UserController>
         <div className="icon-box">
@@ -91,7 +92,7 @@ function SideNav() {
         </div>
         <span className="name">{shorten(user?.address)}</span>
         <button type="button" className="btn">
-          Contoller
+          Controller
         </button>
       </UserController>
     </MainSideBar>

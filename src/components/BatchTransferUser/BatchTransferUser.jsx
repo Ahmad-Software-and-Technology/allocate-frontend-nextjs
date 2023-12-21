@@ -24,7 +24,7 @@ const BatchTransferUser = () => {
         </div>
         <Button variant="primary">Filter</Button>
       </FilterBar>
-      <TransferListWrapper>
+      {/* <TransferListWrapper>
         <TransferList>
           <div className="wrapper">
             <div className="item">
@@ -67,7 +67,7 @@ const BatchTransferUser = () => {
             </div>
           </div>
         </TransferList>
-      </TransferListWrapper>
+      </TransferListWrapper> */}
     </TransferUserListStyle>
   );
 };
